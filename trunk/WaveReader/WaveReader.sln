@@ -1,12 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveReaderDLL", "WaveReader\WaveReaderDLL.csproj", "{0ADF7446-8AB3-4AA1-AB91-A0EDF741F9EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveReader", "WaveReader\WaveReader.csproj", "{0ADF7446-8AB3-4AA1-AB91-A0EDF741F9EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveReaderTest", "WaveReaderTest\WaveReaderTest.csproj", "{80DCA1B2-250F-4DCE-800E-26F359B48A66}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7333E6AB-6096-4908-9C0C-29F0A3C9CAEF}"
+	ProjectSection(SolutionItems) = preProject
+		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
+		WaveReader.vsmdi = WaveReader.vsmdi
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
 		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = WaveReader.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +28,10 @@ Global
 		{0ADF7446-8AB3-4AA1-AB91-A0EDF741F9EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0ADF7446-8AB3-4AA1-AB91-A0EDF741F9EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0ADF7446-8AB3-4AA1-AB91-A0EDF741F9EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80DCA1B2-250F-4DCE-800E-26F359B48A66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80DCA1B2-250F-4DCE-800E-26F359B48A66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80DCA1B2-250F-4DCE-800E-26F359B48A66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80DCA1B2-250F-4DCE-800E-26F359B48A66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
