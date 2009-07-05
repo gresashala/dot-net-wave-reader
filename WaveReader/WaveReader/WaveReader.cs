@@ -9,7 +9,7 @@ namespace WaveReaderDLL
     {
         private static readonly int BitsPerByte = 8;
         private static readonly int MaxBits = 8;
-        public Int32[][] Data { get; private set; }
+        public Int32[][] Samples { get; private set; }
         public int CompressionCode { get; private set; }
         public int NumberOfChannels { get; private set; }
         public int SampleRate { get; private set; }
@@ -59,29 +59,35 @@ namespace WaveReaderDLL
                 chunkLength = binaryReader.ReadInt32();
                 this.Frames = 8 * chunkLength / this.BitsPerSample / this.NumberOfChannels;
                 this.TimeLength = ((double)this.Frames) / ((double)this.SampleRate);
-                this.Data = new Int32[this.NumberOfChannels][];
-                for (int channel = 0; channel < this.NumberOfChannels; channel++)
+                this.Samples = SplitChannels(binaryReader, this.NumberOfChannels, this.BitsPerSample, this.Frames);
+            }
+        }
+
+        public static Int32[][] SplitChannels(BinaryReader binaryReader, int numberOfChannels, int bitsPerSample, int numberOfFrames)
+        {
+            var samples = new Int32[numberOfChannels][];
+            for (int channel = 0; channel < numberOfChannels; channel++)
+            {
+                samples[channel] = new Int32[numberOfFrames];
+            }
+            int readedBits = 0;
+            int numberOfReadedBits = 0;
+            for (int frame = 0; frame < numberOfFrames; frame++)
+            {
+                for (int channel = 0; channel < numberOfChannels; channel++)
                 {
-                    this.Data[channel] = new Int32[this.Frames];
-                }
-                int readedBits = 0;
-                int numberOfReadedBits = 0;
-                for (int frame = 0; frame < this.Frames; frame++)
-                {
-                    for (int channel = 0; channel < this.NumberOfChannels; channel++)
+                    while (numberOfReadedBits < bitsPerSample)
                     {
-                        while (numberOfReadedBits < this.BitsPerSample)
-                        {
-                            readedBits |= Convert.ToInt32(binaryReader.ReadByte()) << numberOfReadedBits;
-                            numberOfReadedBits += BitsPerByte;
-                        }
-                        int numberOfExcessBits = numberOfReadedBits - BitsPerSample;
-                        this.Data[channel][frame] = readedBits >> numberOfExcessBits;
-                        readedBits = readedBits % (1 << numberOfExcessBits);
-                        numberOfReadedBits = numberOfExcessBits;
+                        readedBits |= Convert.ToInt32(binaryReader.ReadByte()) << numberOfReadedBits;
+                        numberOfReadedBits += BitsPerByte;
                     }
+                    int numberOfExcessBits = numberOfReadedBits - bitsPerSample;
+                    samples[channel][frame] = readedBits >> numberOfExcessBits;
+                    readedBits = readedBits % (1 << numberOfExcessBits);
+                    numberOfReadedBits = numberOfExcessBits;
                 }
             }
+            return samples;
         }
     }
 }
