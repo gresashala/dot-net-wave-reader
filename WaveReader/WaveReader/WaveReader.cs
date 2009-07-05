@@ -3,27 +3,26 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace WaveReaderDLL
+namespace WaveReader
 {
-    public class WaveReader
+    public class WaveData
     {
-        private static readonly int BitsPerByte = 8;
-        private static readonly int MaxBits = 8;
-        public Int32[][] Samples { get; private set; }
-        public int CompressionCode { get; private set; }
-        public int NumberOfChannels { get; private set; }
+        private static readonly short BitsPerByte = 8;
+        private static readonly short MaxBits = 16;
+        public short[][] Samples { get; private set; }
+        public short CompressionCode { get; private set; }
+        public short NumberOfChannels { get; private set; }
         public int SampleRate { get; private set; }
         public int BytesPerSecond { get; private set; }
-        public int BitsPerSample { get; private set; }
-        public int BlockAlign { get; private set; }
-        public int Frames { get; private set; }
-        public double TimeLength { get; private set; }
+        public short BitsPerSample { get; private set; }
+        public short BlockAlign { get; private set; }
+        public int NumberOfFrames { get; private set; }
 
         /// <summary>
         /// Reads a Wave file from the input stream, but doesn't close the stream
         /// </summary>
         /// <param name="stream">Input WAVE file stream</param>
-        public WaveReader(Stream stream)
+        public WaveData(Stream stream)
         {
             using (BinaryReader binaryReader = new BinaryReader(stream))
             {
@@ -57,34 +56,33 @@ namespace WaveReaderDLL
                     throw new Exception("Input stream misses the data chunk");
                 }
                 chunkLength = binaryReader.ReadInt32();
-                this.Frames = 8 * chunkLength / this.BitsPerSample / this.NumberOfChannels;
-                this.TimeLength = ((double)this.Frames) / ((double)this.SampleRate);
-                this.Samples = SplitChannels(binaryReader, this.NumberOfChannels, this.BitsPerSample, this.Frames);
+                this.NumberOfFrames = (chunkLength * BitsPerByte) / (this.NumberOfChannels * this.BitsPerSample);
+                this.Samples = SplitChannels(binaryReader, this.NumberOfChannels, this.BitsPerSample, this.NumberOfFrames);
             }
         }
 
-        public static Int32[][] SplitChannels(BinaryReader binaryReader, int numberOfChannels, int bitsPerSample, int numberOfFrames)
+        public static short[][] SplitChannels(BinaryReader binaryReader, short numberOfChannels, short bitsPerSample, int numberOfFrames)
         {
-            var samples = new Int32[numberOfChannels][];
+            var samples = new short[numberOfChannels][];
             for (int channel = 0; channel < numberOfChannels; channel++)
             {
-                samples[channel] = new Int32[numberOfFrames];
+                samples[channel] = new short[numberOfFrames];
             }
-            int readedBits = 0;
-            int numberOfReadedBits = 0;
+            short readedBits = 0;
+            short numberOfReadedBits = 0;
             for (int frame = 0; frame < numberOfFrames; frame++)
             {
                 for (int channel = 0; channel < numberOfChannels; channel++)
                 {
                     while (numberOfReadedBits < bitsPerSample)
                     {
-                        readedBits |= Convert.ToInt32(binaryReader.ReadByte()) << numberOfReadedBits;
+                        readedBits |= (short)(Convert.ToInt16(binaryReader.ReadByte()) << numberOfReadedBits);
                         numberOfReadedBits += BitsPerByte;
                     }
-                    int numberOfExcessBits = numberOfReadedBits - bitsPerSample;
-                    samples[channel][frame] = readedBits >> numberOfExcessBits;
-                    readedBits = readedBits % (1 << numberOfExcessBits);
-                    numberOfReadedBits = numberOfExcessBits;
+                    var numberOfExcessBits = numberOfReadedBits - bitsPerSample;
+                    samples[channel][frame] = (short)(readedBits >> numberOfExcessBits);
+                    readedBits %= (short)(1 << numberOfExcessBits);
+                    numberOfReadedBits = (short)numberOfExcessBits;
                 }
             }
             return samples;

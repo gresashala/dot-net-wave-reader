@@ -1,4 +1,4 @@
-﻿using WaveReaderDLL;
+﻿using WaveReader;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System;
@@ -83,13 +83,13 @@ namespace WaveReaderTest
                         0x15,
                         0x51
                     },
-                    Output = new Int32[][]
+                    Output = new short[][]
                     {
-                        new Int32[]
+                        new short[]
                         {
                             0x15
                         },
-                        new Int32[]
+                        new short[]
                         {
                             0x51
                         }
@@ -104,9 +104,9 @@ namespace WaveReaderTest
                         0x15,
                         0x51
                     },
-                    Output = new Int32[][]
+                    Output = new short[][]
                     {
-                        new Int32[]
+                        new short[]
                         {
                             0x01,
                             0x05,
@@ -124,30 +124,11 @@ namespace WaveReaderTest
                         0x15,
                         0x51
                     },
-                    Output = new Int32[][]
+                    Output = new short[][]
                     {
-                        new Int32[]
+                        new short[]
                         {
                             0x5115
-                        }
-                    }
-                },
-                new SplitChannelsTest()
-                {
-                    BitsPerSample = 32,
-                    NumberOfChannels = 1,
-                    Input = new byte[]
-                    {
-                        0x12,
-                        0x34,
-                        0x56,
-                        0x78
-                    },
-                    Output = new Int32[][]
-                    {
-                        new Int32[]
-                        {
-                            0x78563412
                         }
                     }
                 }
@@ -157,7 +138,7 @@ namespace WaveReaderTest
                 using (var stream = new MemoryStream(splitChannelsTest.Input))
                 using (var binaryReader = new BinaryReader(stream))
                 {
-                    var actual = WaveReader.SplitChannels(binaryReader, splitChannelsTest.NumberOfChannels, splitChannelsTest.BitsPerSample, splitChannelsTest.GetNumberOfFrames());
+                    var actual = WaveData.SplitChannels(binaryReader, splitChannelsTest.NumberOfChannels, splitChannelsTest.BitsPerSample, splitChannelsTest.GetNumberOfFrames());
                     Assert.AreEqual(splitChannelsTest.Output.Length, actual.Length);
                     for (var channel = 0; channel < splitChannelsTest.NumberOfChannels; channel++)
                     {
