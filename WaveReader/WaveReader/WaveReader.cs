@@ -61,6 +61,14 @@ namespace WaveReader
             }
         }
 
+        /// <summary>
+        /// Splits the channels of a binary sequence.
+        /// </summary>
+        /// <param name="binaryReader">The binary reader which contains the binary sequence.</param>
+        /// <param name="numberOfChannels">The number of channels.</param>
+        /// <param name="bitsPerSample">The bits per sample.</param>
+        /// <param name="numberOfFrames">The number of frames.</param>
+        /// <returns>The samples arranged by channel and frame</returns>
         public static short[][] SplitChannels(BinaryReader binaryReader, short numberOfChannels, short bitsPerSample, int numberOfFrames)
         {
             var samples = new short[numberOfChannels][];
